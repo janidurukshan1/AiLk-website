@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AiLK — Search</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="container">
+      <div class="brand">AiLK</div>
+      <div class="controls">
+        <button id="theme-toggle" class="btn small">🌞 Light</button>
+        <button id="share-whatsapp" class="btn small">Share on WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME PAGE -->
+  <main id="home-page" class="home">
+    <div class="logo" aria-hidden="true">
+      <span class="c-a">A</span><span class="c-i">i</span><span class="c-l">L</span><span class="c-k">K</span>
+    </div>
+
+    <form id="home-search-form" class="search-form" action="#" autocomplete="off" onsubmit="event.preventDefault(); doSearch();">
+      <div class="search-row">
+        <button type="button" class="icon" aria-hidden="true">🔍</button>
+        <input id="home-query" name="q" type="search" placeholder="Search AiLK or type a URL" />
+        <button id="home-clear" type="button" class="icon hidden" aria-label="Clear">✕</button>
+        <button id="home-mic" type="button" class="icon mic" aria-label="Voice search" title="Search by voice">🎤</button>
+      </div>
+
+      <div id="home-suggestions" class="suggestions hidden" role="listbox"></div>
+
+      <div class="home-buttons">
+        <button class="btn" id="search-btn" type="button">AiLK Search</button>
+        <button class="btn muted" id="lucky-btn" type="button">I'm Feeling Lucky</button>
+      </div>
+    </form>
+
+    <footer class="footer">
+      <nav class="footer-links">
+        <a href="#">About</a> · <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="#">Settings</a>
+      </nav>
+      <div class="footer-copy">Demo only — Janidu Rukshan</div>
+    </footer>
+  </main>
+
+  <!-- RESULTS PAGE -->
+  <section id="results-page" class="results" aria-hidden="true">
+    <div class="results-top container">
+      <div class="logo small" aria-hidden="true"><span class="c-a">A</span><span class="c-i">i</span><span class="c-l">L</span><span class="c-k">K</span></div>
+
+      <form id="results-search-form" class="search-form small" action="#" autocomplete="off" onsubmit="event.preventDefault(); doSearchFromTop();">
+        <div class="search-row">
+          <button type="button" class="icon" aria-hidden="true">🔍</button>
+          <input id="results-query" name="q" type="search" placeholder="Search AiLK or type a URL" />
+          <button id="results-clear" type="button" class="icon hidden" aria-label="Clear">✕</button>
+          <button id="results-mic" type="button" class="icon mic" aria-label="Voice search" title="Search by voice">🎤</button>
+        </div>
+        <div id="results-suggestions" class="suggestions hidden" role="listbox"></div>
+      </form>
+    </div>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="all">All</button>
+      <button class="tab" data-tab="images">Images</button>
+      <button class="tab" data-tab="news">News</button>
+      <button class="tab" data-tab="videos">Videos</button>
+    </nav>
+
+    <main id="results-main" class="results-main container"></main>
+
+    <footer class="results-footer container">© 2025 AiLK • Janidu Rukshan</footer>
+  </section>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
