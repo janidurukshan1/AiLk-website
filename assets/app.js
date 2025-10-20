@@ -1,33 +1,66 @@
-// ===== AiLK Search Engine – app.js =====
+// ===== AiLK Search Engine – app.js (FINAL FIXED) =====
 
-// --- Get elements ---
+// Select DOM elements
 const searchBox = document.getElementById('searchBox');
 const searchBtn = document.getElementById('searchBtn');
 const modeToggle = document.getElementById('modeToggle');
 const signInBtn = document.getElementById('signInBtn');
 const settingsBtn = document.getElementById('settingsBtn');
 
-// --- Theme Toggle ---
+// === Dark / Light Mode ===
 modeToggle.addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
   modeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
 });
 
-// --- Sign In ---
-signInBtn.addEventListener('click', () => {
-  alert('Sign in successful! Redirecting to customization options...');
-});
-
-// --- Settings ---
-settingsBtn.addEventListener('click', () => {
-  alert('Settings will be available soon! Stay tuned for AiLK customization options.');
-});
-
-// --- Info Pages ---
+// === Info Pages ===
 document.getElementById('about').addEventListener('click', () => {
-  alert('About AiLK:\nThis is a modern AI-powered search platform where you can explore more information quickly and easily.');
+  alert('About AiLK:\nThis is a website that helps you explore information using AI-powered search results.');
 });
 document.getElementById('privacy').addEventListener('click', () => {
-  alert('Privacy Policy:\nAiLK respects your privacy and never stores your personal data.');
+  alert('Privacy Policy:\nWe respect your privacy. AiLK does not store or share your search queries.');
 });
-document.getElementById('terms').addEventListener('cli
+document.getElementById('terms').addEventListener('click', () => {
+  alert('Terms of Use:\nUse AiLK responsibly. Results are powered by Google Search.');
+});
+
+// === Settings and Sign-in ===
+signInBtn.addEventListener('click', () => {
+  alert('Sign in successful!\nYou can now access customization options soon.');
+});
+
+settingsBtn.addEventListener('click', () => {
+  alert('Settings feature is under development. You will be able to personalize AiLK here.');
+});
+
+// === Perform Search ===
+function performSearch() {
+  const query = searchBox.value.trim();
+  if (!query) {
+    alert('Please type something to search.');
+    return;
+  }
+
+  // If it looks like a URL → open directly
+  if (query.startsWith('http://') || query.startsWith('https://') || query.includes('.com')) {
+    window.location.href = query.startsWith('http') ? query : `https://${query}`;
+  } else {
+    // Else, search on Google
+    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+    window.location.href = googleUrl;
+  }
+}
+
+// === Event: Button Click ===
+searchBtn.addEventListener('click', performSearch);
+
+// === Event: Press Enter / Android Search ===
+searchBox.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === 'Search' || e.key === 'Go' || e.key === 'Done') {
+    e.preventDefault();
+    performSearch();
+  }
+});
+
+// Autofocus when loaded
+window.addEventListener('load', () => searchBox.focus());
