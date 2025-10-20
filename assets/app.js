@@ -1,4 +1,4 @@
-// ===== AiLK Search Engine – app.js (FINAL FIXED) =====
+// ===== AiLK Search Engine – app.js =====
 
 // Select DOM elements
 const searchBox = document.getElementById('searchBox');
@@ -15,22 +15,22 @@ modeToggle.addEventListener('click', () => {
 
 // === Info Pages ===
 document.getElementById('about').addEventListener('click', () => {
-  alert('About AiLK:\nThis is a website that helps you explore information using AI-powered search results.');
+  alert('About AiLK:\nThis is a website that helps you explore information using AI-powered search results and fast Google queries.');
 });
 document.getElementById('privacy').addEventListener('click', () => {
-  alert('Privacy Policy:\nWe respect your privacy. AiLK does not store or share your search queries.');
+  alert('Privacy Policy:\nWe value your privacy. AiLK does not store your search history or data.');
 });
 document.getElementById('terms').addEventListener('click', () => {
-  alert('Terms of Use:\nUse AiLK responsibly. Results are powered by Google Search.');
+  alert('Terms of Use:\nUse AiLK for personal exploration. Results come from Google.');
 });
 
-// === Settings and Sign-in ===
+// === Settings & Sign In ===
 signInBtn.addEventListener('click', () => {
-  alert('Sign in successful!\nYou can now access customization options soon.');
+  alert('Sign in successful! You can now personalize your AiLK experience.');
 });
 
 settingsBtn.addEventListener('click', () => {
-  alert('Settings feature is under development. You will be able to personalize AiLK here.');
+  alert('Customization coming soon! Stay tuned for personalized search themes and history.');
 });
 
 // === Perform Search ===
@@ -41,26 +41,18 @@ function performSearch() {
     return;
   }
 
-  // If it looks like a URL → open directly
   if (query.startsWith('http://') || query.startsWith('https://') || query.includes('.com')) {
     window.location.href = query.startsWith('http') ? query : `https://${query}`;
   } else {
-    // Else, search on Google
-    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-    window.location.href = googleUrl;
+    window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
   }
 }
 
-// === Event: Button Click ===
+// === Search Events ===
 searchBtn.addEventListener('click', performSearch);
-
-// === Event: Press Enter / Android Search ===
 searchBox.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' || e.key === 'Search' || e.key === 'Go' || e.key === 'Done') {
     e.preventDefault();
     performSearch();
   }
 });
-
-// Autofocus when loaded
-window.addEventListener('load', () => searchBox.focus());
