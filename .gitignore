@@ -1,2 +1,6 @@
-node_modules/
+# Ignore system & temp files
 .DS_Store
+Thumbs.db
+node_modules/
+*.log
+.env
