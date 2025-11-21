@@ -1,168 +1,275 @@
-/* assets/app.js */
+/* assets/app.js
+   - sign-in/out
+   - suggestions (Google suggest with JSONP fallback)
+   - search open (Enter / click / mobile)
+   - AI MODE (calls /api/chat then falls back to mock)
+   - customize: multiple color themes
+*/
 
-// --------- helpers ----------
+// --- Helpers
 const $ = (s, ctx=document) => ctx.querySelector(s);
-const show = (el) => el && (el.hidden = false, el.classList.remove('hidden'));
-const hide = (el) => el && (el.hidden = true, el.classList.add('hidden'));
+const $$ = (s, ctx=document) => Array.from((ctx||document).querySelectorAll(s));
+const show = el => el && el.classList.remove('hidden');
+const hide = el => el && el.classList.add('hidden');
 
-// elements
-const searchInput = $('#search-input');
-const searchBtn = $('#search-btn');
-const voiceBtn = $('#voice-btn');
-const suggestionsBox = $('#suggestions');
-const aiToggle = $('#ai-mode-toggle');
-const aiDrawer = $('#ai-drawer');
-const aiClose = $('#ai-close');
-const aiForm = $('#ai-form');
-const aiInput = $('#ai-input');
-const chatLog = $('#chat-log');
+// --- Elements
+const searchBox = $('#searchBox');
+const searchBtn = $('#searchForm .search-icon') || $('#searchForm button[type="submit"]');
+const clearBtn = $('#clearBtn');
+const voiceBtn = $('#voiceBtn');
+const suggestions = $('#suggestions');
+const aiModeBtn = $('#aiModeBtn');
+const aiDrawer = $('#aiDrawer');
+const aiClose = $('#aiClose');
+const aiForm = $('#aiForm');
+const aiInput = $('#aiInput');
+const chatLog = $('#chatLog');
 
-const btnSignIn = $('#btn-signin');
-const btnSignOut = $('#btn-signout');
-const btnCustomize = $('#btn-customize');
-const themeToggle = $('#theme-toggle');
+const accountBtn = $('#accountBtn');
+const accountMenu = $('#accountMenu');
+const accName = $('#accName');
+const accSignOut = $('#accSignOut');
+const accCustomize = $('#accCustomize');
+const accHistory = $('#accHistory');
 
-// --- Theme persistence
-if (localStorage.getItem('ailk-theme') === 'dark') document.body.classList.add('dark');
+const customizeBtn = $('#customizeBtn');
+const themeToggle = $('#themeToggle');
+
+// --- Theme handling & customization
+const THEMES = {
+  default: { '--accent':'#1a73e8', '--pill':'#f1f3f4' },
+  midnight: { '--accent':'#8ab4f8', '--pill':'#151515' },
+  coral: { '--accent':'#ff6b6b', '--pill':'#fff0f0' },
+  emerald: { '--accent':'#2ecc71', '--pill':'#f1fff6' }
+};
+
+function applyTheme(name){
+  const t = THEMES[name] || THEMES.default;
+  Object.keys(t).forEach(k => document.documentElement.style.setProperty(k, t[k]));
+  localStorage.setItem('ailk-theme-name', name);
+}
+(function loadTheme(){
+  const name = localStorage.getItem('ailk-theme-name') || 'default';
+  applyTheme(name);
+  const dark = localStorage.getItem('ailk-dark') === '1';
+  if (dark) document.body.classList.add('dark');
+})();
+
 themeToggle.addEventListener('click', () => {
-  document.body.classList.toggle('dark');
-  localStorage.setItem('ailk-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  const dark = document.body.classList.toggle('dark');
+  localStorage.setItem('ailk-dark', dark ? '1' : '0');
 });
 
-// --- Mock sign-in/out
-function updateAuthUI() {
-  const user = localStorage.getItem('ailk-user');
-  if (user) {
-    btnSignIn.style.display = 'none';
-    btnSignOut.style.display = 'inline-block';
-    btnCustomize.style.display = 'inline-block';
+// Customize opens a small modal (simple prompt)
+customizeBtn.addEventListener('click', () => {
+  const name = prompt('Choose theme: default, midnight, coral, emerald', localStorage.getItem('ailk-theme-name') || 'default');
+  if (name && THEMES[name]) applyTheme(name);
+});
+
+// --- Sign in / account UI
+function currentUser(){ return localStorage.getItem('ailk-user'); }
+function setUser(name){ if (name) localStorage.setItem('ailk-user', name); else localStorage.removeItem('ailk-user'); updateAccountUI(); }
+
+function updateAccountUI(){
+  const user = currentUser();
+  if (user){
+    accountBtn.textContent = user;
+    show(accountMenu); // menu available via click
+    hide(accountMenu); // keep hidden until clicked
+    $('#customizeBtn').style.display = 'inline-block';
   } else {
-    btnSignIn.style.display = 'inline-block';
-    btnSignOut.style.display = 'none';
-    btnCustomize.style.display = 'none';
+    accountBtn.textContent = 'Sign in';
+    hide(accountMenu);
+    $('#customizeBtn').style.display = 'inline-block';
   }
 }
-updateAuthUI();
+updateAccountUI();
 
-btnSignIn.addEventListener('click', () => {
-  const name = prompt('Sign in (demo): enter name');
-  if (name) {
-    localStorage.setItem('ailk-user', name);
-    updateAuthUI();
-    alert('Signed in as ' + name);
+accountBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const user = currentUser();
+  if (!user){
+    // quick sign in prompt (demo). default name "My Account"
+    const name = prompt('Sign in (demo). Enter your display name:', 'My Account');
+    if (name) setUser(name);
+    updateAccountUI();
+    return;
   }
+  // toggle menu
+  accountMenu.classList.toggle('hidden');
 });
-btnSignOut.addEventListener('click', () => {
-  localStorage.removeItem('ailk-user');
-  updateAuthUI();
+
+document.addEventListener('click', () => {
+  accountMenu.classList.add('hidden');
+});
+
+accSignOut.addEventListener('click', () => {
+  setUser(null);
+  accountMenu.classList.add('hidden');
   alert('Signed out');
 });
-btnCustomize.addEventListener('click', () => {
-  if (!localStorage.getItem('ailk-user')) { alert('Sign in to customize.'); return; }
-  const theme = localStorage.getItem('ailk-theme') || 'light';
-  const n = prompt('Customize demo (mock). Enter "dark" or "light" for theme:', theme);
-  if (n) { localStorage.setItem('ailk-theme', n); if (n==='dark') document.body.classList.add('dark'); else document.body.classList.remove('dark'); }
+
+accCustomize.addEventListener('click', () => {
+  accountMenu.classList.add('hidden');
+  const name = prompt('Choose theme: default, midnight, coral, emerald', localStorage.getItem('ailk-theme-name') || 'default');
+  if (name && THEMES[name]) applyTheme(name);
 });
 
-// --- search behavior: Enter key and click
-function doSearch() {
-  const q = (searchInput.value || '').trim();
+accHistory.addEventListener('click', () => {
+  accountMenu.classList.add('hidden');
+  alert('History (demo): No stored history in this demo.');
+});
+
+// Show account name on startup if exists
+if (currentUser()) accountBtn.textContent = currentUser();
+
+// --- Search behavior (Enter / Search button / clickable suggestions)
+async function fetchSuggestions(q){
+  if (!q) return [];
+  // try fetch; if blocked, fallback to JSONP
+  try {
+    const res = await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&hl=en&q=${encodeURIComponent(q)}`);
+    const data = await res.json();
+    if (Array.isArray(data) && Array.isArray(data[1])) return data[1].slice(0,7);
+  } catch (err) {
+    // JSONP fallback
+    return new Promise((resolve) => {
+      const cb = '__sugg_cb_' + Date.now();
+      window[cb] = (data) => {
+        try { resolve((data && data[1]) ? data[1].slice(0,7) : []); } finally { script.remove(); delete window[cb]; }
+      };
+      const script = document.createElement('script');
+      script.src = `https://suggestqueries.google.com/complete/search?client=chrome&hl=en&q=${encodeURIComponent(q)}&callback=${cb}`;
+      script.onerror = () => { delete window[cb]; script.remove(); resolve([]); };
+      document.body.appendChild(script);
+    });
+  }
+  return [];
+}
+
+let lastQ = '';
+searchBox.addEventListener('input', async () => {
+  const q = searchBox.value.trim();
+  if (!q){ suggestions.innerHTML=''; hide(suggestions); hide(clearBtn); return; }
+  show(clearBtn);
+  if (q === lastQ) return;
+  lastQ = q;
+  const list = await fetchSuggestions(q);
+  suggestions.innerHTML = '';
+  if (!list || list.length === 0){ hide(suggestions); return; }
+  list.forEach(s => {
+    const div = document.createElement('div'); div.className = 'item'; div.textContent = s;
+    div.addEventListener('click', () => {
+      searchBox.value = s;
+      doSearch();
+    });
+    suggestions.appendChild(div);
+  });
+  show(suggestions);
+});
+
+clearBtn.addEventListener('click', () => { searchBox.value=''; searchBox.focus(); suggestions.innerHTML=''; hide(suggestions); hide(clearBtn); });
+
+// perform search: opens Google results (same tab)
+function doSearch(){
+  const q = (searchBox.value || '').trim();
   if (!q) return;
-  // if looks like url open directly
-  if (/^https?:\/\//i.test(q) || /\w+\.\w{2,}/.test(q)) {
+  // if seems like URL open it
+  if (/^https?:\/\//i.test(q) || /\w+\.\w{2,}/.test(q)){
     window.location.href = q.startsWith('http') ? q : 'https://' + q;
     return;
   }
-  // open real google results in same tab
   window.location.href = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
-searchBtn.addEventListener('click', doSearch);
-searchInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') doSearch();
-});
 
-// --- voice search (Web Speech API)
+// Enter and click handling
+searchBox.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+});
+document.querySelector('.search-row .search-icon').addEventListener('click', () => doSearch());
+$('#searchForm').addEventListener('submit', (e) => { e.preventDefault(); doSearch(); });
+
+// Voice search
 if (window.SpeechRecognition || window.webkitSpeechRecognition) {
   const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recog = new Speech();
   recog.lang = 'en-US';
   recog.interimResults = false;
-  voiceBtn.addEventListener('click', () => {
-    try { recog.start(); } catch(e) {}
-  });
   recog.onresult = (ev) => {
     const txt = ev.results[0][0].transcript;
-    searchInput.value = txt;
+    searchBox.value = txt;
     doSearch();
   };
+  voiceBtn.addEventListener('click', () => {
+    try { recog.start(); } catch(e){}
+  });
 } else {
-  voiceBtn.title = 'Voice not supported';
+  voiceBtn.title = 'Voice search not supported';
 }
 
-// --- suggestions from Google (best-effort; CORS may block)
-let lastSuggest = '';
-searchInput.addEventListener('input', async () => {
-  const q = searchInput.value.trim();
-  if (!q) { suggestionsBox.innerHTML = ''; hide(suggestionsBox); return; }
-  if (q === lastSuggest) return;
-  lastSuggest = q;
-  try {
-    const res = await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(q)}`);
-    const data = await res.json();
-    const list = data[1] || [];
-    suggestionsBox.innerHTML = '';
-    list.slice(0,7).forEach(s => {
-      const div = document.createElement('div'); div.className='item'; div.textContent = s;
-      div.addEventListener('click', () => { searchInput.value = s; doSearch(); });
-      suggestionsBox.appendChild(div);
-    });
-    show(suggestionsBox);
-  } catch(e) {
-    hide(suggestionsBox);
-  }
-});
-
-// --- AI MODE UI toggles ---
-aiToggle.addEventListener('click', () => {
-  show(aiDrawer);
-  aiDrawer.classList.remove('hidden');
+// --- AI MODE logic ---
+// Opens drawer and sends messages to server /api/chat; fallback to local mock reply
+aiModeBtn.addEventListener('click', () => {
+  show(aiDrawer); aiDrawer.classList.remove('hidden');
 });
 aiClose.addEventListener('click', () => {
-  hide(aiDrawer);
-  aiDrawer.classList.add('hidden');
+  hide(aiDrawer); aiDrawer.classList.add('hidden');
 });
 
-// --- AI chat (frontend calls server /api/chat) ---
-function appendChat(role, text) {
-  const d = document.createElement('div'); d.className = 'chat-msg ' + (role==='user' ? 'user' : 'ai');
+// append chat message
+function appendChat(role, text){
+  const d = document.createElement('div');
+  d.className = 'chat-msg ' + (role === 'user' ? 'user' : 'ai');
   d.textContent = text;
   chatLog.appendChild(d);
   chatLog.scrollTop = chatLog.scrollHeight;
 }
 
-aiForm.addEventListener('submit', async (e) => {
+// send AI query
+async function sendAiQuery(prompt){
+  appendChat('user', prompt);
+  appendChat('ai', 'Thinking...');
+  try {
+    // try server endpoint
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ message: prompt })
+    });
+    if (res.ok){
+      const j = await res.json();
+      // remove last placeholder
+      const last = chatLog.querySelector('.chat-msg.ai:last-child');
+      if (last) last.remove();
+      appendChat('ai', j.reply || j.result || 'No reply');
+      return;
+    }
+  } catch(e){
+    // ignore - fallback below
+  }
+  // fallback local mock (fast)
+  const last2 = chatLog.querySelector('.chat-msg.ai:last-child');
+  if (last2) last2.remove();
+  const mock = localAiReply(prompt);
+  appendChat('ai', mock);
+}
+
+// simple local mock AI (fallback)
+function localAiReply(prompt){
+  prompt = prompt.toLowerCase();
+  if (prompt.includes('time')) return `Current time: ${new Date().toLocaleTimeString()}`;
+  if (prompt.includes('hello') || prompt.includes('hi')) return 'Hello! I am AiLK assistant. How can I help?';
+  if (prompt.includes('weather')) return "I can't fetch live weather in this demo. Try 'weather in london' on Google.";
+  return "Sorry — AI MODE requires a server to provide live ChatGPT answers. This is a demo fallback.";
+}
+
+aiForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const txt = (aiInput.value || '').trim();
   if (!txt) return;
-  appendChat('user', txt);
   aiInput.value = '';
-  appendChat('ai', '...'); // placeholder
-  // call server
-  try {
-    const token = localStorage.getItem('ailk-api-token') || ''; // optional token if you add auth
-    const res = await fetch('/api/chat', {
-      method:'POST',
-      headers: { 'Content-Type':'application/json', 'Authorization': token ? `Bearer ${token}` : '' },
-      body: JSON.stringify({ message: txt })
-    });
-    const data = await res.json();
-    // remove last placeholder
-    const last = chatLog.querySelector('.chat-msg.ai:last-child');
-    if (last) last.remove();
-    if (res.ok && data?.reply) appendChat('ai', data.reply);
-    else appendChat('ai', data?.error || 'AI reply failed');
-  } catch (err) {
-    const last = chatLog.querySelector('.chat-msg.ai:last-child'); if (last) last.remove();
-    appendChat('ai', 'Network error: ' + err.message);
-  }
+  sendAiQuery(txt);
 });
+
+// init: if demo user exists show name
+if (currentUser()) accountBtn.textContent = currentUser();
