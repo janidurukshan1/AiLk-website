@@ -1,44 +1,69 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AiLK - Smart Search Engine</title>
-  <link rel="stylesheet" href="assets/style.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AiLK — Smart Search + AI MODE</title>
+<link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
-  <header>
-    <h1 class="logo">AiLK</h1>
-    <div class="header-buttons">
-      <button id="modeToggle" title="Toggle Dark/Light Mode">🌙</button>
-      <button id="signInBtn">Sign in</button>
-      <button id="settingsBtn">⚙️</button>
+  <header class="topbar">
+    <div class="left-links">
+      <a id="link-about" href="#">About</a>
+      <a id="link-privacy" href="#">Privacy</a>
+      <a id="link-terms" href="#">Terms</a>
+    </div>
+    <div class="right-controls">
+      <button id="btn-customize" class="btn small" style="display:none">Customize</button>
+      <button id="btn-signin" class="btn small">Sign in</button>
+      <button id="btn-signout" class="btn small" style="display:none">Sign out</button>
+      <button id="theme-toggle" class="btn small">🌞</button>
     </div>
   </header>
 
-  <main>
-    <div class="search-area">
-      <input id="searchBox" type="text" placeholder="Search AiLK or type a URL" autofocus />
-      <button id="searchBtn">🔍</button>
+  <main class="home">
+    <div class="logo">
+      <span class="c-a">A</span><span class="c-i">i</span><span class="c-l">L</span><span class="c-k">K</span>
     </div>
 
-    <div class="tabs">
-      <button>All</button>
-      <button>Images</button>
-      <button>News</button>
-      <button>Videos</button>
+    <form id="search-form" class="search-form" onsubmit="return false;">
+      <div class="search-box">
+        <input id="search-input" name="q" type="search" placeholder="Search AiLK or type a URL" autocomplete="off" />
+        <button id="search-btn" class="icon-btn" title="Search">🔍</button>
+        <button id="voice-btn" class="icon-btn" title="Voice search">🎤</button>
+      </div>
+
+      <div id="suggestions" class="suggestions" hidden></div>
+
+      <div class="actions">
+        <button id="ai-mode-toggle" class="btn">AI MODE</button>
+        <button id="lucky-btn" class="btn secondary">I'm Feeling Lucky</button>
+      </div>
+    </form>
+
+    <div class="about-text">
+      <strong>About:</strong> This is a website where you can explore more information and discover useful content across the internet.
     </div>
+
+    <footer class="footer">Demo only — Janidu Rukshan</footer>
   </main>
 
-  <footer>
-    <p id="about">About</p>
-    <p id="privacy">Privacy</p>
-    <p id="terms">Terms</p>
-    <p class="credit">Demo only © 2025 Janidu Rukshan</p>
-  </footer>
+  <!-- AI MODE Drawer -->
+  <aside id="ai-drawer" class="ai-drawer hidden">
+    <div class="ai-header">
+      <h3>AiLK — AI MODE</h3>
+      <button id="ai-close" class="icon-btn">✕</button>
+    </div>
+    <div id="chat-log" class="chat-log"></div>
+    <form id="ai-form" class="ai-form" onsubmit="return false;">
+      <input id="ai-input" placeholder="Ask AiLK (powered by ChatGPT)..." autocomplete="off" />
+      <button id="ai-send" class="btn">Send</button>
+    </form>
+  </aside>
 
-  <script src="assets/app.js"></script>
+  <!-- Sign-in Modal -->
+  <div id="modal-root"></div>
+
+<script src="assets/app.js"></script>
 </body>
 </html>
-
-
