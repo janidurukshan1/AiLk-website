@@ -1,91 +1,63 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AiLK — Smart Search & AI MODE</title>
-  <link rel="stylesheet" href="assets/style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AiLK – New Year 2026</title>
+
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/doodle.css">
 </head>
 <body>
-  <header class="topbar container">
-    <nav class="left-links">
-      <a href="about.html">About</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-    </nav>
 
-    <div class="right-controls">
-      <button id="customizeBtn" class="btn small">Customize</button>
+<header class="top-bar">
+  <div class="left-links">
+    <a href="about.html">About</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+  </div>
 
-      <div class="account-wrap">
-        <button id="accountBtn" class="btn small">Sign in</button>
-        <div id="accountMenu" class="account-menu hidden" aria-hidden="true">
-          <div class="acc-name" id="accName">My Account</div>
-          <button id="accCustomize" class="menu-item">Customize</button>
-          <button id="accHistory" class="menu-item">History</button>
-          <button id="accSignOut" class="menu-item">Sign out</button>
-        </div>
-      </div>
-
-      <button id="themeToggle" class="btn small">🌞</button>
-    </div>
-  </header>
-
-  <main class="home container">
-    <div class="hero">
-      <div class="logo" aria-hidden="true">
-        <span class="c-a">A</span><span class="c-i">i</span><span class="c-l">L</span><span class="c-k">K</span>
-      </div>
-
-      <div class="search-wrap">
-        <form id="searchForm" class="search-form" onsubmit="return false;">
-          <div class="search-row">
-            <button type="button" class="icon search-icon" aria-hidden="true">🔍</button>
-            <input id="searchBox" name="q" type="search" inputmode="search"
-                   placeholder="Search AiLK or type a URL" autocomplete="off" />
-            <button id="clearBtn" type="button" class="icon hidden" title="Clear">✕</button>
-            <button id="voiceBtn" type="button" class="icon" title="Voice search">🎤</button>
-          </div>
-        </form>
-
-        <div id="suggestions" class="suggestions hidden" role="listbox" aria-hidden="true"></div>
-
-        <div class="search-actions">
-          <div class="action-icons">
-            <button id="bookmarkBtn" class="action">＋</button>
-            <button id="trendingBtn" class="action">👑</button>
-            <button id="moreBtn" class="action">⋯</button>
-          </div>
-          <div class="controls">
-            <button id="aiModeBtn" class="btn primary">AI MODE</button>
-            <!-- "I'm Feeling Lucky" removed as requested -->
-          </div>
-        </div>
+  <div class="right-links">
+    <button id="customizeBtn">Customize</button>
+    <div class="account">
+      <span id="accountName">My Account</span>
+      <div class="dropdown">
+        <button id="signOutBtn">Sign out</button>
       </div>
     </div>
+  </div>
+</header>
 
-    <footer class="footer">
-      <div class="demo-note">Demo only — Janidu Rukshan</div>
-    </footer>
-  </main>
+<main>
+  <!-- 🎆 NEW YEAR DOODLE -->
+  <div class="doodle" id="doodle">
+    <span class="g">A</span>
+    <span class="o1">i</span>
+    <span class="o2">L</span>
+    <span class="g2">K</span>
+    <span class="year">2026</span>
+  </div>
 
-  <!-- AI Drawer -->
-  <aside id="aiDrawer" class="ai-drawer hidden" aria-hidden="true">
-    <div class="ai-header">
-      <div><strong>AiLK — AI MODE</strong><span class="ai-sub"> (fast assistant)</span></div>
-      <button id="aiClose" class="icon">✕</button>
-    </div>
-    <div id="chatLog" class="chat-log" aria-live="polite"></div>
+  <!-- SEARCH BAR -->
+  <div class="search-box">
+    <input id="searchInput" placeholder="Search AiLK or type a URL">
+    <button id="searchBtn">🔍</button>
+    <button id="micBtn">🎤</button>
+  </div>
 
-    <form id="aiForm" class="ai-form" onsubmit="return false;">
-      <input id="aiInput" placeholder="Ask AiLK (e.g. 'Define recursion')" autocomplete="off" />
-      <button id="aiSend" class="btn">Send</button>
-    </form>
-  </aside>
+  <!-- ACTION BUTTONS -->
+  <div class="actions">
+    <button id="aiModeBtn">AI MODE 🤖</button>
+  </div>
 
-  <!-- Modal / overlays root -->
-  <div id="modalRoot" class="modal-root hidden" aria-hidden="true"></div>
+  <!-- SEARCH SUGGESTIONS -->
+  <ul id="suggestions"></ul>
 
-  <script src="assets/app.js"></script>
+  <footer>
+    Demo only — Janidu Rukshan
+  </footer>
+</main>
+
+<script src="assets/app.js"></script>
 </body>
 </html>
