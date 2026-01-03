@@ -1,32 +1,53 @@
-const form = document.getElementById("searchForm");
-const input = document.getElementById("searchInput");
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
+const suggestions = document.getElementById("suggestions");
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
+const sampleSuggestions = [
+  "Weather today",
+  "YouTube",
+  "Facebook",
+  "AiLK Search Engine",
+  "GitHub",
+  "Google Maps"
+];
 
-  const query = input.value.trim();
-  if (!query) return;
+searchInput.addEventListener("input", () => {
+  suggestions.innerHTML = "";
+  if (!searchInput.value) return;
 
-  // Redirect to REAL Google results
-  const url = "https://www.google.com/search?q=" + encodeURIComponent(query);
-  window.location.href = url;
+  sampleSuggestions.forEach(item => {
+    if (item.toLowerCase().includes(searchInput.value.toLowerCase())) {
+      const li = document.createElement("li");
+      li.textContent = item;
+      li.onclick = () => doSearch(item);
+      suggestions.appendChild(li);
+    }
+  });
 });
 
-function openShortcut(url) {
-  window.open(url, "_blank");
+searchBtn.onclick = () => doSearch(searchInput.value);
+
+searchInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") doSearch(searchInput.value);
+});
+
+function doSearch(query) {
+  if (!query) return;
+  window.location.href =
+    "https://www.google.com/search?q=" + encodeURIComponent(query);
 }
 
-// Fake account system (frontend only)
-document.getElementById("accountBtn").onclick = () => {
-  if (localStorage.getItem("ailkUser")) {
-    localStorage.removeItem("ailkUser");
-    alert("Signed out successfully");
-  } else {
-    localStorage.setItem("ailkUser", "loggedin");
-    alert("Signed in successfully");
-  }
+/* ACCOUNT MENU */
+const accountBtn = document.getElementById("accountBtn");
+const accountMenu = document.getElementById("accountMenu");
+
+accountBtn.onclick = () => {
+  accountMenu.style.display =
+    accountMenu.style.display === "block" ? "none" : "block";
 };
 
-  searchInput.value = "Happy New Year 2026 🎉";
-  aiModeBtn.click();
-};
+document.addEventListener("click", e => {
+  if (!accountBtn.contains(e.target)) {
+    accountMenu.style.display = "none";
+  }
+});
